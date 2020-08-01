@@ -16,7 +16,14 @@
 - An understanding of how to unit test with Rspec
 - An understanding of paperclip/imagemagick (for storing images)
 
-## Introduction
+## Codebase Overview and Functionality
+
+## 
+
+### Heroku Scheduler Tasks
+
+
+## Getting Started With Codebase Development
 
 ### What is this codebase?
 From the website (learnmate.com.au):
@@ -76,50 +83,4 @@ For development on ruby on rails:
 2. Install webdriver and chromedriver (make sure it's in the PATH variable)
 3. Launch the selenium server using ```java -jar .\selenium-server-standalone-3.0.1.jar -port 4445```
 
-### Setting up a local copy of the wordpress Application
 
-First, download a fresh copy of the website from wordpress and the database from PHP My Admin. I cannot host it on github since there are regular updates to it that are going to be done directly on the site.
-
-4 Things You Must Do To Remove SSL
-
-- In the database in the wp_ycsm_options table the first two entries are set to https://learnmate.com.au. Change these to http://localhost:8000
-- Edit the old .htaccess file, put this in its place:
-
-```
-    # BEGIN WordPress
-    <IfModule mod_rewrite.c>
-    RewriteEngine On
-    RewriteBase /
-    RewriteRule ^index\.php$ - [L]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule . /index.php [L]
-    </IfModule>
-    # END WordPress
-```
-- You should now be able to access http://localhost:8000/wp-admin
-- Deactivate the really simple ssl plugin
-- Delete the SSL javascript redirect. This is located in the Insert Headers and Footers plugin options inside the settings tab on the left. You will see a piece of code like the following:
-
-```javascript
-<script>
-console.log(location.protocol);
-if (location.protocol != 'https:') {
- location.href = 'https:' + window.location.href.substring(window.location.protocol.length);
-}
-</script>
-```
-
-Delete this and you should be set!
-
-
-## Things to try when clearing database (to make website faster)
-
-```sql
-DELETE 
-FROM `wp_ycsm_options` 
-WHERE `autoload` = 'yes'
-AND `option_name` LIKE '%transient%';
-```
-
-Delete the line with the name "cron" in wp_ycsm_options
