@@ -442,8 +442,7 @@ Example Response:
 ]
 ```
 
-
-#### Get All Curriculums - *Ignore*
+#### Get All Curriculums - _Ignore_
 
 **Used on:**
 
@@ -459,7 +458,7 @@ get '/curriculums/all'
 
 - When sms is sent out, the messages link to this address.
 
-Tutor is marked as available/unavailable based on the link they click in the SMS. If the tutor clicks no, they are redirected to the register unavailability page on the learnmate website. 
+Tutor is marked as available/unavailable based on the link they click in the SMS. If the tutor clicks no, they are redirected to the register unavailability page on the learnmate website.
 
 ```
 get '/availability/yes'
@@ -469,32 +468,30 @@ get '/availability/yes'
 get '/availability/no'
 ```
 
-
 ## Admin Interface APIs
 
-The Admin interface APIs have been documented in the [doc/ folder](https://github.com/learnmatetutors/learnmate-rails/tree/master/doc) in the root directory of the learnmate-rails git repository. 
+The Admin interface APIs have been documented in the [doc/ folder](https://github.com/learnmatetutors/learnmate-rails/tree/master/doc) in the root directory of the learnmate-rails git repository.
 
 ### Enquire Form Processing
 
 **How the list of tutors sent from the enquire form is processed**
 
 The list of tutors is sent from the enquire form goes through 3 distinct functions:
-1. The Stripe user id is stored in teachworks. 
-    - The stripe js sdk is responsible for creating this user id using the information entered into the enquire form
-    - Credit Card details are not sent to the server or to teachworks.
+
+1. The Stripe user id is stored in teachworks.
+   - The stripe js sdk is responsible for creating this user id using the information entered into the enquire form
+   - Credit Card details are not sent to the server or to teachworks.
 2. The account in teachworks is created with the relevant information (see [Enquire Form Submission](#enquire-form-submission))\
-    - Teachworks API docs can be found [here](https://documenter.getpostman.com/view/10096149/SWTABydD?version=114c35a6-1ae2-4ae5-b72a-de25d005563f)
-3. An entry is made into the portal with the teachworks and stripe id of the new submission (http://learnmate-admin.herokuapp.com/#/new_customers) and the automation process is started. 
+   - Teachworks API docs can be found [here](https://documenter.getpostman.com/view/10096149/SWTABydD?version=114c35a6-1ae2-4ae5-b72a-de25d005563f)
+3. An entry is made into the portal with the teachworks and stripe id of the new submission (http://learnmate-admin.herokuapp.com/#/new_customers) and the automation process is started.
 
-Any errors during this stage are shown as a popup in the form. It is important to note that these steps occur in order. If there is an error in a certain step, the rest are not executed. 
-
+Any errors during this stage are shown as a popup in the form. It is important to note that these steps occur in order. If there is an error in a certain step, the rest are not executed.
 
 ### Creating New Tutors
 
-The actual APIs used for this can be found in the [doc/ folder](https://github.com/learnmatetutors/learnmate-rails/tree/master/doc) mentioned above in tutor.rb. 
+The actual APIs used for this can be found in the [doc/ folder](https://github.com/learnmatetutors/learnmate-rails/tree/master/doc) mentioned above in tutor.rb.
 
 Also see [the schema](https://github.com/learnmatetutors/learnmate-rails/blob/master/db/schema.rb) for more details about relationships between tutors and their attributes.
-
 
 ### Export Button
 
@@ -511,6 +508,7 @@ A tutor can have 1 or more subjects (see [the schema](https://github.com/learnma
 In [this file](https://github.com/learnmatetutors/learnmate-rails/blob/master/app/commands/authorize_admin_request.rb) there is a way to change the password for the user account.
 
 The method that I use to do this is as follows:
+
 - Uncomment `change_user_password_authentication`
 - change the `@user.password` to the new password
 - Deploy changes on heroku
@@ -524,22 +522,24 @@ def change_user_password_authentication
     @user.password_confirmation = "new password"
     @user.save!
 end
-``` 
+```
 
 ### Automation system
 
 Documentation for the functions of the automation system can be found in the [doc/ folder](https://github.com/learnmatetutors/learnmate-rails/tree/master/doc).
 
 As mentioned in [enquirenow_helper.rb](https://github.com/learnmatetutors/learnmate-rails/blob/master/app/helpers/api/enquirenow_helper.rb), the main functions are:
-    1. Deduct $15.95 from stripe
-    2. Automate the activating of student/parent teachworks account and sending email to tutor via teachworks
-    3. Automate sending of SMS messages to tutors
+
+1. Deduct \$15.95 from stripe
+2. Automate the activating of student/parent teachworks account and sending email to tutor via teachworks
+3. Automate sending of SMS messages to tutors
 
 This uses selenium to do this. There are errors which can be retrieved in the process
 
-!> Ask Dmitri for trainig document for a list of errors. 
+!> Ask Dmitri for trainig document for a list of errors.
 
 There are errors for:
+
 - Stripe failures due to preexisting account
 - Tutor unable to be found in teachworks
 - Tutor profile unable to be activiated since another tutor exists with the same name
@@ -548,9 +548,16 @@ There are errors for:
 - Teachworks server failure
 - SMS account out of credit
 
+#### BurstSMS API
+
+See BurstSMS API: https://burstsms.com.au/sms-api
+
+After the tutor has been emailed, we also send the tutor a text message to them to confirm. This is done after the automation has activated the student's account above. 
+
 ### Diagnosing Errors in Automation System and Enquire Form
 
 These are the regular steps I follow when new errors are brought to my attention:
+
 - Navigate to Heroku portal for this application
 - Navigate to the resources tab
 - From here, click the link to the logs platform PaperTrail
@@ -559,19 +566,45 @@ These are the regular steps I follow when new errors are brought to my attention
 - If there is a form submission, prettify this and identify any errors in the submissin
 
 Sometimes, errors are outputted to the users which they do not understand clearly. The common ones are:
+
 - A parent has submitted an extra blank student in their form
 - A parent has submitted two students with the same name
 - Teachworks or Stripe were unreachable during the transaction due to other running processes.
 
 ## Connection To TeachWorks
 
-- Sending saved tutors to TW to create a TW account. 
-- Sending an automatic SMS through BurstSMS to the tutor for new enquiries.
-- How the returning student/family TW accounts are created (and then ignored)
-- How the unavailability function works on Heroku and the TeachWorks API (pulling new queries every 24 hours etc)
-- How the API pulls updated contact data and inputs this into Heroku daily for the relevant tutors that need to be pulled.
+### Form Submission Connection To TeachWorks
+
+When the form is submitted:
+
+- Teachworks API is called to submit the details that were filled out in the form
+- If student form submitted:
+  - New student account is created in teachworks
+  - Each field is sent to teachworks
+- If parent form submitted:
+  - New parent account created in teachworks
+  - Parent fields are sent to teachworks
+  - Create an account for each student
+  - Populate relevant fields for each student
+- If there are any errors in this process, see [common errors](#diagnosing-errors-in-automation-system-and-enquire-form)
+
+### Returning Students
+
+When a returning student/parent (someone who has enquired at learnmate before) submits the returning student/parent form (https://learnmate.com.au/returning-customer/form/) they have a stripe ID of `returning-customer`. In order to verify the details that they have submitted into the form (without any credit card details), we still create a teachworks account for them (without activating it).
+
+This teachworks account is ignored and the admins assign the tutor the tutor that they have asked for to the original teachworks account for the returning customer.
+
+The automation does not run for the returning student form.
 
 ## Heroku Scheduler Tasks
+
+| Task                              | Time                 | Description                                                                                                                                                                                                |
+| --------------------------------- | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `check_teachworks_unavailability` | Daily at 2:30 PM UTC | For each tutor in teachworks, if the tutor has marked themselves as unavailable on teachworks create a new `unavailability` in the table with a `from_time` and `to_time` and associate it with the tutor. |
+| `check_tutor_availability`        | Daily at 4:00 PM UTC | When a tutor has an unavailability with `from_time` <= current date and `to_time` >= current date, mark the tutor as inactive.                                                                             |
+| `get_phone_and_email`             | Daily at 4:30 PM UTC | For each tutor, fetch their phone number and email address from teachworks and store this in the heroku portal.                                                                                            |
+
+The other functions in `scheduler.rb` support these main scheduled tasks.
 
 # Getting Started With Codebase Development
 
