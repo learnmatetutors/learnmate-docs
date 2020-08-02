@@ -48,9 +48,10 @@ The Heroku System Exposes APIs (as discussed in the last dot point) for the foll
 
 ## Internal Heroku Functions
 
-- List of tutors sent from the enquire form is processed
+- How the list of tutors sent from the enquire form is processed
 - Credit Card processing on ruby on rails server using Stripe
 - Calling the TeachWorks API to register the new student
+    - Teachworks API docs can be found [here](https://documenter.getpostman.com/view/10096149/SWTABydD?version=114c35a6-1ae2-4ae5-b72a-de25d005563f)
 - Creating new tutors (+ adding their AVATAR, description, addresses, site link etc.)
 - Export button works to export all active tutors and their phone numbers
 - Adding and Removing subjects
