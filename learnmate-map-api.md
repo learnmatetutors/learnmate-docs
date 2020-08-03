@@ -64,23 +64,84 @@ There was no plugin which was able to meet these requirements. Hence, we needed 
 The learnmate website uses cloudfront for the CDN. There are three levels of caching in place:
 - Sucuri caches everything, but it seems cache invalidation is not handled correctly on their side. Hence, requests are not generally handled on sucuri servers.
 - Amazon CloudFront caches all website assets including full pages, images and scripts. This is located in https://d3e4w3i6bal5ta.cloudfront.net/
-- WP Total Cache does some local caching on the server.
+- W3 Total Cache does some local caching on the server.
 
 In order to clear the cache:
-- 
+- Hover on W3 Total Cache in the top bar
+- Clear Cache (locally)
+- Clear CDN Cache (on CloudFront)
+- We do not need to clear Sucuri Cache - Invalidation has never been a problem here
+- Cache expiry is set to one day
+
+## Staging Site
+
+In order to test plugins and wordpress site updates, a clone of the actual learnmate website exists https://learnmate.com.au/1589700928403/
+
+In order to clone the current website to the staging site (before we can test updates and plugins):
+- In the sidebar on the dashboard click on WP Staging Plugin
+- Follow the process to clone the current wordpress website
+- Access the staging site https://learnmate.com.au/1589700928403/
+- Log in with same username and password as the production website
+- Deactivate plugins which are mentioned in [404 Issues](#404-issues)
+- Make sure plugin updates do not cause site problems
+- Make any changes in staging separately on production as well
+
+## 404 Issues
+
+There have been 404 Issues brought to my attention which occur after an admin logs into the website. While I haven't been able to trace the root cause of the issue yet, disabling these plugins seems to eliviate the issue:
+- W3 Total Cache
+- WP Simple Pay Pro 3
+- Query Monitor
+
+There are also some unrelated 404 issues which require further investigation when we go to edit certain text fields on tutor pages. This is not fixed by disabling the plugins above.
+
+## Favicon
+
+Changing the favicon of the website must be done in two places:
+- In customise menu option on the left hand side
+- In Yoast SEO Plugin 
+
+After changing it in these, the new favicon should be live on the learnmate website. 
+
+## Top Bar on LearnMate
+
+The top bar is generally fixed to the top of the page (the code for this is in the `header.html` which is injected into all pages on the website).
+
+There is a special rule to this on the 15 ATAR Success Tips page. Here, the top bar is no longer fixed since the quiz plugin scrolls to the top of the quiz each time a user inputs the answer to a question.
+
+Hence, the top bar appears on top of the quiz, hiding the contents underneath. We had to make the top bar not fixed on this page in order to accomodate for this. 
 
 
-- The staging site location and how to use/access it.
-- The favicon installation and how to use/access it.
-- The bespoke nature of the top bar on LearnMate (15 ATAR Success Tips)
-- The bespoke nature of the enquire form SCHOOL SUCCESS GUIDE popup that occurs when you try to exit the enquire form page.
-- The bespoke nature of AffiliateWP and how student affiliate submissions are processed.
-- The staging site and if applicable how to do site speedup, updates etc.
+## School Success Guide Popup
 
+A plugin called Yeoli Exit Popup manages the school success guide popup. This popup occurs when the user tries to exit the parent/student enquire form. 
 
-# Getting Started
+In order to edit this popup, please see the Yeloni Exit Popup documentation.
 
-## Setting Up A Local Copy of The Wordpress Website
+## Affiliate Submissions
+
+Affiliate WP looks for a ref in the url to register success. In order to fake this, I have used the email address of the form submitter as the ref, which means if the user had been referred, he/she would be marked as a successful referral.
+
+Example:
+`https://learnmate.com.au/returning-student-success/?ref=TEST@TEST.com`
+
+See the Affiliate WP Plugin for more details.
+
+## Site Speedup
+
+I have found that the follow query helps with site speedup. It deletes entries which are not necessary.
+
+```sql
+DELETE 
+FROM `wp_ycsm_options` 
+WHERE `autoload` = 'yes'
+AND `option_name` LIKE '%transient%';
+```
+Proceed with caution but the following can also help:
+- Delete the line with the name "cron" in wp_ycsm_options (it can get quite lengthy)
+- Update wordpress version and plugins
+
+# Getting Started - Setting Up A Local Copy of The Wordpress Website
 
 First, download a fresh copy of the website from wordpress and the database from PHP My Admin. I cannot host it on github since there are regular updates to it that are going to be done directly on the site.
 
@@ -105,13 +166,3 @@ First, download a fresh copy of the website from wordpress and the database from
 - Deactivate the really simple ssl plugin
 
 
-## Things to try when clearing database (to make website faster)
-
-```sql
-DELETE 
-FROM `wp_ycsm_options` 
-WHERE `autoload` = 'yes'
-AND `option_name` LIKE '%transient%';
-```
-
-Delete the line with the name "cron" in wp_ycsm_options
