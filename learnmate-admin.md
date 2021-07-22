@@ -28,6 +28,11 @@ These APIs can be called from http://localhost:8000 only in the development buil
 
 _Please see [api_helper.rb](https://github.com/learnmatetutors/learnmate-rails/blob/master/app/helpers/api_helper.rb) for further details on CORS policies_
 
+
+#### Note on all tutor api endpoints
+
+A new field has been added to the tutor models `compiled` which is a boolean. This is a flag to indicate if gatsby has compiled a unique URL for this tutor. With each endpoint that pulls a list of tutors, has a new parameter that can be used - `?compiled_only=true`. Setting this parameter will filter results that only have `compiled = true`. This is needed to ensure our search engine does not return results that do not yet have a compiled URL.
+
 #### Search For Tutors Online and Offline
 
 **Used On:**
@@ -42,10 +47,12 @@ post '/search/tutors'
 | Attribute    | Type    | Required | Description                                              | Example  |
 | ------------ | ------- | -------- | -------------------------------------------------------- | -------- |
 | `limit`      | int     | yes      | The maximum number of tutors the response should contain | 100      |
-| `online`     | boolean | yes      | Is this an online search query?                          | true     |
+| `online`     | boolean | yes      | Is this an online search query?                          | 1     |
 | `subject_id` | string  | yes      | Comma separated string of subject ids for search         | 40,50    |
 | `lat`        | int     | no       | Latitude of the center of searched suburb                | -37.8136 |
 | `lng`        | int     | no       | Latitude of the center of searched suburb                | 144.9630 |
+
+Notes from Gatsby Devs: It appears lat and lng are required, but must be set to 0 if you want to ignore them
 
 Response example:
 
@@ -441,6 +448,133 @@ Example Response:
   ...
 ]
 ```
+
+### New Endpoints added during Gatsby Build
+
+#### Get All Tutors
+
+**Used on:**
+
+- Gatsby Compilation when generating unqiue URLS for tutors
+
+```
+get '/tutors'
+```
+
+Example Response:
+
+```json
+[
+    {
+        tutor: {
+        id: 3037,
+        name: "Kimia G",
+        site_link: "meet-our-tutors/kimia-g/",
+        email: "Kim8ped6fifi27@gmail.com",
+        phone: "+61469789388",
+        description:
+            "Hi there! I'm Kimia, a Primary School, Years 7 - 10 Science, Maths, VCE Biology, Chemistry, English and Maths Methods Tutor. It is a great pleasure for me as a highly motivated and dedicated student with passion, to help you achieve your academic goals.",
+        responded: true,
+        avatar_link: "wp-content/uploads/rails/Kimia G_3037_1579188020.JPG",
+        subjects: [
+            {
+            id: 5,
+            subject_name: "Biology",
+            curriculum: "VCE",
+            legacy_id: 5,
+            active: true,
+            },
+            {
+            id: 7,
+            subject_name: "Chemistry",
+            curriculum: "VCE",
+            legacy_id: 7,
+            active: true,
+            },
+            {
+            id: 11,
+            subject_name: "English",
+            curriculum: "VCE",
+            legacy_id: 11,
+            active: true,
+            },
+            {
+            id: 40,
+            subject_name: "Maths Methods",
+            curriculum: "VCE",
+            legacy_id: 40,
+            active: true,
+            },
+            {
+            id: 206,
+            subject_name: "Science",
+            curriculum: "VIC710",
+            legacy_id: 221,
+            active: true,
+            },
+        ],
+        },
+        location: "Melbourne Victoria, Australia",
+        lat: "-37.8136276",
+        lng: "144.9630576",
+        dist: 0.0,
+    }
+];
+```
+
+
+#### Get All Subjects (Not organised into category)
+
+**Used on:**
+
+- Gatsby Compilation when generating unqiue fields for our search form
+
+```
+get '/subjects'
+```
+
+Example Response:
+
+```json
+[
+    {
+        "id": 277,
+        "subject_name": "Australian Politics",
+        "curriculum": "VCE"
+    },
+    {
+        "id": 3,
+        "subject_name": "Art",
+        "curriculum": "VCE"
+    },
+  ...
+]
+```
+
+#### Update tutor compiled field
+
+**Used on:**
+
+- Gatsby Compilation, marks all compiled tutors as 'compiled', which allows them to be searched via the search fron on the gatsby site.
+
+```
+put '/tutors/update_compiled'
+```
+
+
+| Attribute   | Type   | Required | Description                                                     | Example |
+| ----------- | ------ | -------- | --------------------------------------------------------------- | ------- |
+| `tutor_ids` | [id]   | yes      | An array of IDS to mark as compoled                             | [3360]  |
+
+
+Example Post Object:
+
+```json
+{
+   "tutor_ids": [3360]
+}
+```
+
 
 #### Get All Curriculums - _Ignore_
 
