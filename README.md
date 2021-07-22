@@ -6,3 +6,5 @@
 [Learnmate Admin Console](learnmate-admin.md)
 
 [Learnmate Map API - WordPress Plugin](learnmate-map-api.md)
+
+[Learnmate Gatsby Integration](learnmate-gatsby-setup.md)
