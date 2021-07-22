@@ -91,7 +91,7 @@ To emulate the deploy process in a development environemt run the following. Thi
 `gatsby build && gatsby serve`
 
 
-### Netlify SErverless Lambda Functions
+### Netlify Serverless Lambda Functions
 
 We are using a lambda function as a middle man for serveral items in this project. This functions can be found in `src/lambda` and is compilied to `serverless`. To compile these files run `yarn lambda`.
 

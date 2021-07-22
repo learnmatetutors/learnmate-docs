@@ -31,7 +31,7 @@ _Please see [api_helper.rb](https://github.com/learnmatetutors/learnmate-rails/b
 
 #### Note on all tutor api endpoints
 
-A new field has been added to the tutor models `compiled` which is a boolean. This is a flag to indicate if gatsby has compiled a unique URL for this tutor. With each endpoint that pulls a list of tutors, has a new parameter that can be used - `?compiled_only=true`. Setting this parameter will filter results that only have `compiled = true`. This is needed to ensure our search engine does not return results that do not yet have a compiled URL.
+A new field has been added to the tutor models `compiled` which is a boolean. This is a flag to indicate if gatsby has compiled a unique URL for this tutor. With each endpoint that pulls a list of tutors, you can use a new parameter that can be used - `?compiled_only=true`. Setting this parameter will filter results that only have `compiled = true`. This is needed to ensure our search engine does not return results that do not yet have a compiled URL.
 
 #### Search For Tutors Online and Offline
 
